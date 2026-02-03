@@ -1,0 +1,27 @@
+{
+  "name": "n8n-lovable",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "canvas": "^3.2.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "openai": "^6.17.0",
+    "pdf-parse": "^2.4.5",
+    "pdf-poppler": "^0.2.3",
+    "pdfjs-dist": "^5.4.624",
+    "sharp": "^0.34.5",
+    "tesseract.js": "^7.0.0"
+  }
+}
