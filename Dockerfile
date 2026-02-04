@@ -1,6 +1,5 @@
 FROM node:20-slim
 
-# Dependências do sistema (OCR + PDF)
 RUN apt-get update && apt-get install -y \
   tesseract-ocr \
   poppler-utils \
@@ -17,5 +16,3 @@ ENV PORT=3000
 EXPOSE 3000
 
 CMD ["npm", "start"]
-
-
