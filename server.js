@@ -32,7 +32,6 @@ async function rodarTesseract(imagemPath) {
   return result.data.text;
 }
 
-
 app.post("/ocr", upload.single("file"), async (req, res) => {
   const filePath = req.file.path;
   let imagemPath = filePath;
@@ -45,14 +44,9 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
     }
 
     const textoOCR = await rodarTesseract(imagemPath);
-
-    // Limpar texto antes de extrair dados
     const textoLimpo = limparTextoOCR(textoOCR);
-
-    // Extrair dados usando IA
     const dadosExtraidos = await extrairDadosIA(textoLimpo);
 
-    // Limpar arquivo temporário se foi criado
     if (arquivoTemporario) {
       try {
         unlinkSync(arquivoTemporario);
@@ -61,16 +55,12 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
       }
     }
 
-    // Retornar apenas os dados extraídos
     res.json(dadosExtraidos);
   } catch (error) {
-    // Limpar arquivo temporário em caso de erro
     if (arquivoTemporario) {
       try {
         unlinkSync(arquivoTemporario);
-      } catch (e) {
-        // Ignorar erro ao deletar
-      }
+      } catch (e) {}
     }
 
     console.error("Erro ao processar arquivo:", error);
@@ -81,12 +71,6 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(3000, () =>
-  console.log("OCR rodando na porta 3000")
-);
+// APENAS UM app.listen()
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log("OCR rodando na porta", PORT)
-);
-
-
+app.listen(PORT, () => console.log(`OCR rodando na porta ${PORT}`));
