@@ -25,7 +25,7 @@ Campos:
 5. telefone - telefone do PACIENTE (não da clínica)
 6. email - email do PACIENTE (na linha do nome, após "Email:")
 7. dataOrcamento - data do orçamento (formato DD/MM/AAAA)
-8. procedimentos - array com cada procedimento contendo APENAS:
+8. descricoes - array com cada descrição dos procedimentos contendo:
    - descricao: nome do procedimento (ex: "Limpeza Completa com Raspagem Supra Gengival")
    - quantidade: número inteiro (ex: 1, 20, 2)
    - valor: número sem R$ (ex: 160.00, 2520.00)
@@ -34,6 +34,7 @@ ATENÇÃO:
 - Email/telefone da CLÍNICA deve ser IGNORADO
 - Procure email do PACIENTE na linha "Paciente: Nome   Email: xxx@xxx.com"
 - Corrija erros de OCR em emails (Qgmail.com → @gmail.com)
+- As descrições estão no campo "Descrição:" de cada procedimento
 
 Formato JSON:
 {
@@ -44,7 +45,7 @@ Formato JSON:
   "telefone": null,
   "email": "luanalimaas07@gmail.com",
   "dataOrcamento": "17/11/2025",
-  "procedimentos": [
+  "descricoes": [
     {"descricao": "Limpeza Completa com Raspagem Supra Gengival", "quantidade": 1, "valor": 160.00},
     {"descricao": "Restauração em Resina - 1 Face", "quantidade": 20, "valor": 2520.00}
   ]
@@ -79,7 +80,7 @@ ${textoOCR}
     "telefone",
     "email",
     "dataOrcamento",
-    "procedimentos"
+    "descricoes"
   ];
 
   const dadosFiltrados = {};
