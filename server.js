@@ -84,4 +84,9 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
 app.listen(3000, () =>
   console.log("OCR rodando na porta 3000")
 );
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log("OCR rodando na porta", PORT)
+);
+
 
