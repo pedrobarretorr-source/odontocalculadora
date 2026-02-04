@@ -22,8 +22,6 @@ function limparTextoOCR(texto) {
   return texto
     .replace(/\n{2,}/g, "\n")
     .replace(/https?:\/\/\S+/g, "")
-    .replace(/Email:.*$/gim, "")
-    .replace(/Telefone:.*$/gim, "")
     .trim();
 }
 
@@ -50,6 +48,12 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
 
     // Extrair dados usando IA
     const dadosExtraidos = await extrairDadosIA(textoLimpo);
+
+    // DEBUG
+    console.log("=== TEXTO OCR ===");
+    console.log(textoLimpo);
+    console.log("=== DADOS EXTRAÍDOS ===");
+    console.log(JSON.stringify(dadosExtraidos, null, 2));
 
     // Limpar arquivo temporário se foi criado
     if (arquivoTemporario) {
