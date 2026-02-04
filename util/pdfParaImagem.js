@@ -1,18 +1,13 @@
-import { createRequire } from "module";
+import { execSync } from "child_process";
 import path from "path";
-
-const require = createRequire(import.meta.url);
-const pdfPoppler = require("pdf-poppler");
 
 export async function pdfParaImagem(pdfPath) {
   const outputDir = path.dirname(pdfPath);
+  const outputName = path.basename(pdfPath, path.extname(pdfPath));
+  const outputPath = path.join(outputDir, `${outputName}.png`);
 
-  await pdfPoppler.convert(pdfPath, {
-    format: "png",
-    out_dir: outputDir,
-    out_prefix: "pagina",
-    page: 1
-  });
+  // Usa pdftoppm do poppler-utils
+  execSync(`pdftoppm -png -f 1 -l 1 -singlefile "${pdfPath}" "${path.join(outputDir, outputName)}"`);
 
-  return path.join(outputDir, "pagina-1.png");
+  return outputPath;
 }
