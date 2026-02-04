@@ -1,19 +1,33 @@
-import { fromPath } from "pdf2pic";
+import { createCanvas } from "canvas";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import { writeFileSync } from "fs";
 import path from "path";
 
 export async function pdfParaImagem(pdfPath) {
-  const options = {
-    density: 200,
-    saveFilename: "pagina",
-    savePath: path.dirname(pdfPath),
-    format: "png",
-    width: 1654,
-    height: 2339
-  };
-
-  const storeAsImage = fromPath(pdfPath, options);
-
-  const result = await storeAsImage(1); // primeira página
-
-  return result.path;
+  // Carrega o PDF
+  const pdf = await pdfjsLib.getDocument(pdfPath).promise;
+  
+  // Pega a primeira página
+  const page = await pdf.getPage(1);
+  
+  // Define a escala (2 = boa qualidade para OCR)
+  const scale = 2;
+  const viewport = page.getViewport({ scale });
+  
+  // Cria o canvas
+  const canvas = createCanvas(viewport.width, viewport.height);
+  const context = canvas.getContext("2d");
+  
+  // Renderiza a página no canvas
+  await page.render({
+    canvasContext: context,
+    viewport: viewport,
+  }).promise;
+  
+  // Salva como PNG
+  const outputPath = pdfPath.replace(".pdf", ".png");
+  const buffer = canvas.toBuffer("image/png");
+  writeFileSync(outputPath, buffer);
+  
+  return outputPath;
 }
