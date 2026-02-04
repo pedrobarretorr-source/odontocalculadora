@@ -1,19 +1,23 @@
-import { createRequire } from "module";
+import { fromPath } from "pdf2pic";
 import path from "path";
-
-const require = createRequire(import.meta.url);
-const pdfPoppler = require("pdf-poppler");
 
 export async function pdfParaImagem(pdfPath) {
   const outputDir = path.dirname(pdfPath);
+  const outputFilename = "pagina";
 
-  await pdfPoppler.convert(pdfPath, {
+  const options = {
+    density: 300,
+    saveFilename: outputFilename,
+    savePath: outputDir,
     format: "png",
-    out_dir: outputDir,
-    out_prefix: "pagina",
-    page: 1 // normalmente o orçamento está na 1ª página
-  });
+    width: 2000,
+    height: 2000
+  };
 
-  return path.join(outputDir, "pagina-1.png");
+  const convert = fromPath(pdfPath, options);
+  
+  // Converte a primeira página
+  const result = await convert(1, { responseType: "image" });
+  
+  return result.path;
 }
-
