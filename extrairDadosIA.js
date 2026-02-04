@@ -15,26 +15,40 @@ export async function extrairDadosIA(textoOCR) {
 
   const prompt = `Você receberá o texto de um orçamento odontológico.
 
-IMPORTANTE: Extraia APENAS e EXCLUSIVAMENTE os 6 campos listados abaixo.
-NÃO extraia nenhum outro campo.
-NÃO invente dados.
-Se um campo não for encontrado claramente, retorne null para ele.
+Extraia os campos abaixo. Se um campo não for encontrado, retorne null.
 
-Campos OBRIGATÓRIOS (retorne APENAS estes):
-1. valorTratamento - número do "Valor Total" (somente número, sem símbolos como R$)
-2. unidade - APENAS uma destas: "Centro", "Tancredo Neves" ou "Raiar do Sol" (inferir do nome da clínica)
-3. nomePaciente - nome do paciente (geralmente após "Paciente:")
-4. observacoes - texto que aparecer após "Observações" (se vazio, retorne null)
-5. telefone - telefone DO PACIENTE (NÃO da clínica). Geralmente aparece na mesma linha ou próximo ao nome do paciente
-6. email - email DO PACIENTE (NÃO da clínica). Geralmente aparece na mesma linha do nome do paciente, após "Email:"
+Campos:
+1. valorTratamento - número do "Valor Total" (somente número, sem R$)
+2. unidade - "Centro", "Tancredo Neves" ou "Raiar do Sol" (inferir do nome da clínica)
+3. nomePaciente - nome do paciente (após "Paciente:")
+4. observacoes - texto após "Observações" (se vazio, null)
+5. telefone - telefone do PACIENTE (não da clínica)
+6. email - email do PACIENTE (na linha do nome, após "Email:")
+7. dataOrcamento - data do orçamento (formato DD/MM/AAAA)
+8. procedimentos - array com cada procedimento contendo APENAS:
+   - descricao: nome do procedimento (ex: "Limpeza Completa com Raspagem Supra Gengival")
+   - quantidade: número inteiro (ex: 1, 20, 2)
+   - valor: número sem R$ (ex: 160.00, 2520.00)
 
 ATENÇÃO:
-- O email/telefone da CLÍNICA (que aparece junto com endereço) deve ser IGNORADO
-- Procure o email do PACIENTE que aparece na linha "Paciente: Nome   Email: xxx@xxx.com"
-- Corrija erros de OCR em emails (ex: Qgmail.com → @gmail.com)
+- Email/telefone da CLÍNICA deve ser IGNORADO
+- Procure email do PACIENTE na linha "Paciente: Nome   Email: xxx@xxx.com"
+- Corrija erros de OCR em emails (Qgmail.com → @gmail.com)
 
-Formato de resposta (JSON):
-{"valorTratamento":1500,"unidade":"Centro","nomePaciente":"João Silva","observacoes":null,"telefone":"99999-9999","email":"email@gmail.com"}
+Formato JSON:
+{
+  "valorTratamento": 7189,
+  "unidade": "Centro",
+  "nomePaciente": "Luana Lima Santos",
+  "observacoes": null,
+  "telefone": null,
+  "email": "luanalimaas07@gmail.com",
+  "dataOrcamento": "17/11/2025",
+  "procedimentos": [
+    {"descricao": "Limpeza Completa com Raspagem Supra Gengival", "quantidade": 1, "valor": 160.00},
+    {"descricao": "Restauração em Resina - 1 Face", "quantidade": 20, "valor": 2520.00}
+  ]
+}
 
 Texto do orçamento:
 """
@@ -57,14 +71,15 @@ ${textoOCR}
     parsed = await corrigirJSON(respostaIA);
   }
 
-  // Garantir apenas os campos permitidos
   const camposPermitidos = [
     "valorTratamento",
     "unidade",
     "nomePaciente",
     "observacoes",
     "telefone",
-    "email"
+    "email",
+    "dataOrcamento",
+    "procedimentos"
   ];
 
   const dadosFiltrados = {};
