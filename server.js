@@ -27,24 +27,23 @@ function limparTextoOCR(texto) {
     .trim();
 }
 
-async function rodarTesseract(imagemPath) {
-  const result = await Tesseract.recognize(imagemPath, "por");
-  return result.data.text;
-}
-
-
 app.post("/ocr", upload.single("file"), async (req, res) => {
-  const filePath = req.file.path;
-  let imagemPath = filePath;
+  let imagemPath = req.file.path;
   let arquivoTemporario = null;
 
   try {
-    if (req.file.mimetype === "application/pdf") {
-      imagemPath = await pdfParaImagem(filePath);
+    const arquivo = req.file;
+    const extensao = arquivo.originalname.split('.').pop().toLowerCase();
+
+    // Se for PDF, converter para imagem primeiro
+    if (extensao === "pdf") {
+      imagemPath = await pdfParaImagem(arquivo.path);
       arquivoTemporario = imagemPath;
     }
 
-    const textoOCR = await rodarTesseract(imagemPath);
+    // Processar com OCR
+    const result = await Tesseract.recognize(imagemPath, "por");
+    const textoOCR = result.data.text;
 
     // Limpar texto antes de extrair dados
     const textoLimpo = limparTextoOCR(textoOCR);
@@ -61,16 +60,12 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
       }
     }
 
-    // Retornar apenas os dados extraídos
     res.json(dadosExtraidos);
   } catch (error) {
-    // Limpar arquivo temporário em caso de erro
     if (arquivoTemporario) {
       try {
         unlinkSync(arquivoTemporario);
-      } catch (e) {
-        // Ignorar erro ao deletar
-      }
+      } catch (e) {}
     }
 
     console.error("Erro ao processar arquivo:", error);
@@ -81,7 +76,4 @@ app.post("/ocr", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(3000, () =>
-  console.log("OCR rodando na porta 3000")
-);
-
+app.listen(3000, () => console.log("OCR rodando na porta 3000"));
