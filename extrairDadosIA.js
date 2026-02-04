@@ -21,18 +21,20 @@ NÃO invente dados.
 Se um campo não for encontrado claramente, retorne null para ele.
 
 Campos OBRIGATÓRIOS (retorne APENAS estes):
-1. valorTratamento - número do "Valor Total" (somente número, sem símbolos)
+1. valorTratamento - número do "Valor Total" (somente número, sem símbolos como R$)
 2. unidade - APENAS uma destas: "Centro", "Tancredo Neves" ou "Raiar do Sol" (inferir do nome da clínica)
-3. nomePaciente - nome do paciente
-4. observacoes - observações do orçamento
-5. telefone - número de telefone
-6. email - endereço de email (corrija erros de OCR óbvios como Qgmail.com → gmail.com)
+3. nomePaciente - nome do paciente (geralmente após "Paciente:")
+4. observacoes - texto que aparecer após "Observações" (se vazio, retorne null)
+5. telefone - telefone DO PACIENTE (NÃO da clínica). Geralmente aparece na mesma linha ou próximo ao nome do paciente
+6. email - email DO PACIENTE (NÃO da clínica). Geralmente aparece na mesma linha do nome do paciente, após "Email:"
 
-Regras:
-- Retorne SOMENTE um JSON com esses 6 campos
-- Ignore completamente: links, textos repetidos, lixo visual, outros dados do orçamento
-- Formato esperado:
-{"valorTratamento":1500,"unidade":"Centro","nomePaciente":"João Silva","observacoes":"...","telefone":"...","email":"..."}
+ATENÇÃO:
+- O email/telefone da CLÍNICA (que aparece junto com endereço) deve ser IGNORADO
+- Procure o email do PACIENTE que aparece na linha "Paciente: Nome   Email: xxx@xxx.com"
+- Corrija erros de OCR em emails (ex: Qgmail.com → @gmail.com)
+
+Formato de resposta (JSON):
+{"valorTratamento":1500,"unidade":"Centro","nomePaciente":"João Silva","observacoes":null,"telefone":"99999-9999","email":"email@gmail.com"}
 
 Texto do orçamento:
 """
