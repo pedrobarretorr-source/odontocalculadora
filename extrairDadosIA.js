@@ -81,9 +81,6 @@ ${textoOCR}
     "email",
     "dataOrcamento",
     "descricoes"
-    "descricao"
-    "quantidade"
-    "valor"
   ];
 
   const dadosFiltrados = {};
